@@ -112,8 +112,8 @@ int main(int argc ,char **argv){
   SORT(v);
 
 
-  for(int i=0;i<10;i++){
-  // while(1){
+  // for(int i=0;i<10;i++){
+  while(1){
     shrink(v);
     if (v[0] == 1 || v.size() == 1) {
       cout << v[0] << endl;
@@ -132,7 +132,6 @@ int main(int argc ,char **argv){
     if(index != -1) {
       insert(v, min, index);
     }
-
 
     // EACH(k, v)
     //   cout << *k << ",";
