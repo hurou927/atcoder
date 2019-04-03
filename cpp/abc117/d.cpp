@@ -10,7 +10,8 @@
 #include <cmath>
 #include <queue>
 #include <stack>
-
+#include <cstdlib>
+#include <cstdio>
 
 #define ALL(a) (a).begin(), (a).end()
 #define EACH(i, c) for (auto i = (c).begin(); i != (c).end(); ++i)
@@ -24,64 +25,116 @@
 #define FOR(i, a, b) for (auto i = (a); i < (b); i++)
 #define RFOR(i, a, b) for (int i = (b)-1; i >= (a); i--)
 
-
 #define repd(i, a, b) for (int i = (a); i < (b); i++)
 #define rep(i, n) repd(i, 0, n)
 typedef long long ll;
 
-int inputValue(){
-  int a;
+template <typename T>
+T inputValue()
+{
+  T a;
   std::cin >> a;
+  // scanf("%d", &a);
   return a;
 }
 
-void inputArray(int *p, int a){
-    rep(i, a){
-        std::cin >> p[i];
-    }
+void inputArray(int *p, int a)
+{
+  rep(i, a)
+  {
+    std::cin >> p[i];
+    // scanf("%d",p+i);
+  }
 }
 
-void inputVector(std::vector<int> *p, int a){
-  rep(i, a){
-    int input;
+template <typename T>
+void inputVector(std::vector<T> *p, int a)
+{
+  rep(i, a)
+  {
+    T input;
     std::cin >> input;
+    // scanf("%d", &input);
     p->push_back(input);
   }
 }
 
 template <typename T>
-void output(T a, int precision){
-  if (precision > 0){
+void output(T a, int precision)
+{
+  if (precision > 0)
+  {
     std::cout << std::setprecision(precision) << a << "\n";
-  }else{
+  }
+  else
+  {
     std::cout << a << "\n";
   }
 }
 
 using namespace std;
 
-int gcd(int a,int b){
-  while(1) {
-    if(a < b) swap(a, b);
-    if(!b) break;
+int gcd(int a, int b)
+{
+  while (1)
+  {
+    if (a < b)
+      swap(a, b);
+    if (!b)
+      break;
     a %= b;
   }
   return a;
 }
 
+typedef unsigned long long int ulli;
+int main(int argc, char **argv)
+{
 
-int main(int argc ,char **argv){
+  ulli N = inputValue<ulli>();
+  ulli K = inputValue<ulli>();
+  vector<ulli> v;
+  inputVector<ulli>(&v, N);
 
-  int N = inputValue();
-  vector <int> v;
-  inputVector(&v, N);
 
-  // cout << gcd(5,13) << endl;
-  int d = 0;
-  EACH(k, v) {
-    d = gcd(d, *k);
+  vector<int> bitSum(64,0);
+
+  EACH(k, v)
+  {
+    ulli t = *k;
+    for(int i=0; i<64&&t!=0; i++){
+      bitSum[i] = bitSum[i] + (t&1) ;
+      t = t >> 1;
+    }
   }
-  cout << d << endl;
 
-	return 0;
+  ulli d = 0;
+
+  int flag = 0;
+  for (int i = 63; i >= 0; i--)
+  {
+
+    ulli K_bit = (K >> i) & 1ll;
+    ulli A_bit = (bitSum[i] > N / 2 ? 0 : 1);
+    ulli D_bit;
+    if (!flag)
+    {
+      D_bit = K_bit && A_bit;
+      flag = K_bit && (!A_bit);
+    } else {
+      D_bit = A_bit;
+    }
+    d = (d << 1) | (D_bit);
+  }
+
+
+  ulli sum = 0;
+  EACH(k, v)
+  {
+    sum = sum + (*k^d);
+  }
+  cout << sum << endl;
+  return 0;
 }
+
+//

@@ -10,7 +10,8 @@
 #include <cmath>
 #include <queue>
 #include <stack>
-
+#include <cstdlib>
+#include <cstdio>
 
 #define ALL(a) (a).begin(), (a).end()
 #define EACH(i, c) for (auto i = (c).begin(); i != (c).end(); ++i)
@@ -24,64 +25,81 @@
 #define FOR(i, a, b) for (auto i = (a); i < (b); i++)
 #define RFOR(i, a, b) for (int i = (b)-1; i >= (a); i--)
 
-
 #define repd(i, a, b) for (int i = (a); i < (b); i++)
 #define rep(i, n) repd(i, 0, n)
 typedef long long ll;
 
-int inputValue(){
+int inputValue()
+{
   int a;
-  std::cin >> a;
+  // std::cin >> a;
+  scanf("%d", &a);
   return a;
 }
 
-void inputArray(int *p, int a){
-    rep(i, a){
-        std::cin >> p[i];
-    }
+void inputArray(int *p, int a)
+{
+  rep(i, a)
+  {
+    // std::cin >> p[i];
+    scanf("%d",p+i);
+  }
 }
 
-void inputVector(std::vector<int> *p, int a){
-  rep(i, a){
+void inputVector(std::vector<int> *p, int a)
+{
+  rep(i, a)
+  {
     int input;
-    std::cin >> input;
+    // std::cin >> input;
+    scanf("%d", &input);
     p->push_back(input);
   }
 }
 
 template <typename T>
-void output(T a, int precision){
-  if (precision > 0){
+void output(T a, int precision)
+{
+  if (precision > 0)
+  {
     std::cout << std::setprecision(precision) << a << "\n";
-  }else{
+  }
+  else
+  {
     std::cout << a << "\n";
   }
 }
 
 using namespace std;
 
-int gcd(int a,int b){
-  while(1) {
-    if(a < b) swap(a, b);
-    if(!b) break;
+int gcd(int a, int b)
+{
+  while (1)
+  {
+    if (a < b)
+      swap(a, b);
+    if (!b)
+      break;
     a %= b;
   }
   return a;
 }
 
-
-int main(int argc ,char **argv){
+int main(int argc, char **argv)
+{
 
   int N = inputValue();
-  vector <int> v;
+  vector<int> v;
   inputVector(&v, N);
 
-  // cout << gcd(5,13) << endl;
-  int d = 0;
-  EACH(k, v) {
-    d = gcd(d, *k);
+  int sum = 0;
+  EACH(k, v)
+  {
+    sum += (*k-1);
   }
-  cout << d << endl;
 
-	return 0;
+  cout << sum << endl;
+  return 0;
 }
+
+//
