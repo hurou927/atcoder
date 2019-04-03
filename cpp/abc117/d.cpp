@@ -33,8 +33,8 @@ template <typename T>
 T inputValue()
 {
   T a;
-  std::cin >> a;
-  // scanf("%d", &a);
+  // std::cin >> a;
+  scanf("%llu", &a);
   return a;
 }
 
@@ -53,8 +53,8 @@ void inputVector(std::vector<T> *p, int a)
   rep(i, a)
   {
     T input;
-    std::cin >> input;
-    // scanf("%d", &input);
+    // std::cin >> input;
+    scanf("%llu", &input);
     p->push_back(input);
   }
 }
@@ -97,7 +97,7 @@ int main(int argc, char **argv)
   inputVector<ulli>(&v, N);
 
 
-  vector<int> bitSum(64,0);
+  vector<ulli> bitSum(64,0);
 
   EACH(k, v)
   {
@@ -108,33 +108,25 @@ int main(int argc, char **argv)
     }
   }
 
-  ulli d = 0;
-
   int flag = 0;
-  for (int i = 63; i >= 0; i--)
-  {
-
-    ulli K_bit = (K >> i) & 1ll;
-    ulli A_bit = (bitSum[i] > N / 2 ? 0 : 1);
-    ulli D_bit;
-    if (!flag)
-    {
-      D_bit = K_bit && A_bit;
-      flag = K_bit && (!A_bit);
-    } else {
-      D_bit = A_bit;
-    }
-    d = (d << 1) | (D_bit);
-  }
-
 
   ulli sum = 0;
-  EACH(k, v)
-  {
-    sum = sum + (*k^d);
+  for (int i = 63; i >= 0; i--){
+    ulli K_bit = (K >> i) & 1ll;
+    ulli A_bit = (bitSum[i] > N / 2 ? 0 : 1); // 多数決
+    ulli X_bit = A_bit;
+    if (!flag) {// Kを超えないように調整:
+      X_bit = K_bit && A_bit;
+      flag = K_bit && (!A_bit);
+      // K: kkkkkk1kkkkk 
+      // A: aaaaaa0aaaaa
+      // D: dddddddddddd
+      // 1-0のパターンの左は D=K&A
+      // 右は D=A
+    }
+    sum = sum + (((X_bit) ? N - bitSum[i] : bitSum[i]) << i);
+
   }
   cout << sum << endl;
-  return 0;
-}
 
-//
+}
