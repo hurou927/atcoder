@@ -72,27 +72,24 @@ void output(T a, int precision)
   }
 }
 
+void print() { std::cout << std::endl; }
+template <class Head, class... Tail>
+void print(Head &&head, Tail &&... tail)
+{
+  std::cout << head << ",";
+  print(std::forward<Tail>(tail)...);
+}
+
 using namespace std;
 
-int gcd(int a, int b)
-{
-  while (1)
-  {
-    if (a < b)
-      swap(a, b);
-    if (!b)
-      break;
-    a %= b;
-  }
-  return a;
-}
 
-typedef unsigned long long int ulli;
 int main(int argc, char **argv)
 {
-  int N = inputValue<int>();
-  vector <int> v;
+  int64_t N = inputValue<int>();
+  vector<int64_t> v;
   inputVector(&v, N);
 
+  print('c', 1, 2.01, 3);
+
   return 0;
-}
+  }

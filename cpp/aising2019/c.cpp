@@ -93,7 +93,7 @@ int gcd(int a, int b)
 typedef unsigned long long int ulli;
 typedef pair<int, int> P;
 
-void eva(int *visited, int *input, stack<P> &st, int H, int W, int center_h, int center_w, int neighbor_h, int neighbor_w)
+void move(int *visited, int *input, stack<P> &st, int H, int W, int center_h, int center_w, int neighbor_h, int neighbor_w)
 {
   if (neighbor_h >= 0 &&
       neighbor_w >= 0 &&
@@ -151,10 +151,10 @@ int main(int argc, char **argv)
         N++;
         ones = ones + ulli(input[INDEX(W, y, x)]);
 
-        eva(visited, input, st, H, W, y, x, y - 1, x);
-        eva(visited, input, st, H, W, y, x, y + 1, x);
-        eva(visited, input, st, H, W, y, x, y, x - 1);
-        eva(visited, input, st, H, W, y, x, y, x + 1);
+        move(visited, input, st, H, W, y, x, y - 1, x);
+        move(visited, input, st, H, W, y, x, y + 1, x);
+        move(visited, input, st, H, W, y, x, y, x - 1);
+        move(visited, input, st, H, W, y, x, y, x + 1);
       }
       // cout << N << "#" << ones << endl;
       sum = sum + ones * (N-ones);
