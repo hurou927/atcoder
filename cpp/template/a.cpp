@@ -85,7 +85,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-  int64_t N = inputValue<int>();
+  int64_t N = inputValue<int64_t>();
   vector<int64_t> v;
   inputVector(&v, N);
 
