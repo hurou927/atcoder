@@ -8,11 +8,13 @@
 #include <numeric>
 #include <functional>
 #include <cmath>
+#include <list>
 #include <queue>
 #include <stack>
 #include <cstdlib>
 #include <cstdio>
 
+#define INDEX(W, h, w) ((W) * (h) + (w))
 #define ALL(a) (a).begin(), (a).end()
 #define EACH(i, c) for (auto i = (c).begin(); i != (c).end(); ++i)
 #define EXIST(s, e) ((s).find(e) != (s).end())
@@ -74,6 +76,7 @@ void output(T a, int precision)
 
 using namespace std;
 
+
 int gcd(int a, int b)
 {
   while (1)
@@ -88,33 +91,84 @@ int gcd(int a, int b)
 }
 
 typedef unsigned long long int ulli;
+typedef pair<int, int> P;
+
+void eva(int *visited, int *input, stack<P> &st, int H, int W, int center_h, int center_w, int neighbor_h, int neighbor_w)
+{
+  if (neighbor_h >= 0 &&
+      neighbor_w >= 0 &&
+      neighbor_h < H &&
+      neighbor_w < W &&
+      input[INDEX(W, center_h, center_w)] != input[INDEX(W, neighbor_h, neighbor_w)] &&
+      !visited[INDEX(W, neighbor_h, neighbor_w)])
+  {
+    visited[INDEX(W, neighbor_h, neighbor_w)] = 1;
+    st.push(P(neighbor_h, neighbor_w));
+  }
+}
+
 int main(int argc, char **argv)
 {
   int H = inputValue<int>();
   int W = inputValue<int>();
-  int *graph = new int [H*W];
-  int *connect = new int [H*W];
+  int *input = new int [H*W];
+  int *visited = new int [H*W];
 
+  vector<list<int>> graph(H * W, list<int>());
   int i = 0;
   char c;
   while ((c = getc(stdin)) != EOF) {
     if  (c == '#' || c == '.') {
-      graph[i++] = (c=='.'); // if black(#) is 0, otherwise 1  
-      // cout << graph[i-1] << endl;
+      input[i++] = (c=='.'); // if black(#) is 0, otherwise 1  
     }
   }
 
+  
   for(int i=0; i<H*W; i++){
-    connect[i] = i;
+    visited[i] = 0;
   }
 
-  // 上から下
-  for(int j=0; j<W; j++){
-    for(int i=0; i<H; i++){
-      
+ 
+  stack<P> st;
+  ulli sum = 0;
+  for (int i=0; i<H; i++){
+    for(int j=0; j<W; j++){
+      if (visited[INDEX(W, i, j)])
+      {
+        continue;
+      }
+      st.push(pair<int, int>(i, j));
+      ulli ones = 0;
+      ulli N = 0;
+      while (st.size() != 0)
+      {
+        P p = st.top();
+        st.pop();
+        int y = p.first;
+        int x = p.second;
+        // cout <<i<<"#"<<j<<"|" << y << "," << x << "," << st.size() << endl;
+        visited[INDEX(W, y, x)] = 1;
+        N++;
+        ones = ones + ulli(input[INDEX(W, y, x)]);
+
+        eva(visited, input, st, H, W, y, x, y - 1, x);
+        eva(visited, input, st, H, W, y, x, y + 1, x);
+        eva(visited, input, st, H, W, y, x, y, x - 1);
+        eva(visited, input, st, H, W, y, x, y, x + 1);
+      }
+      // cout << N << "#" << ones << endl;
+      sum = sum + ones * (N-ones);
     }
   }
 
-  free(graph);
-  return 0;
+  // for (int i=0; i<H; i++){
+  //   for(int j=0; j<W; j++){
+  //     cout << input[INDEX(W, i, j)];
+  //   }
+  //   cout << endl;
+  // }
+    cout << sum << endl;
+    free(input);
+    free(visited);
+    return 0;
 }
