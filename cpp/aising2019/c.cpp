@@ -110,10 +110,57 @@ int main(int argc, char **argv)
 
   // 上から下
   for(int j=0; j<W; j++){
-    for(int i=0; i<H; i++){
-      
+    for(int i=1; i<H; i++){
+      if(graph[(i-1)*W+j]!=graph[i*W+j]) {
+        connect[i*W+j] = min(connect[(i-1)*W+j], connect[i*W+j]);
+      }
     }
   }
+
+  // 左から右
+  for(int i=0; i<H; i++){
+    for(int j=1; j<W; j++){
+      if(graph[i*W+j-1]!=graph[i*W+j]) {
+        connect[i*W+j] = min(connect[i*W+j-1], connect[i*W+j]);
+      }
+    }
+  }
+
+   // 下から上
+  for(int j=0; j<W; j++){
+    for(int i=H-2; i>=0; i--){
+      if(graph[(i+1)*W+j]!=graph[i*W+j]) {
+        // cout << i <<","<< j << ","<<connect[(i+1)*W+j]<<","<<connect[i*W+j] <<endl;
+        connect[i*W+j] = min(connect[(i+1)*W+j], connect[i*W+j]);
+      }
+    }
+  }
+
+
+
+  // 右から左
+  for(int i=0; i<H; i++){
+    for(int j=W-2; j>=0; j--){
+      if(graph[i*W+j+1]!=graph[i*W+j]) {
+        connect[i*W+j] = min(connect[i*W+j+1], connect[i*W+j]);
+      }
+    }
+  }
+
+  // for(int i=0; i<H; i++){
+  //   for(int j=0; j<W; j++){
+  //     cout <<  graph[i*W+j] << "," ;
+  //   }
+  //   cout << endl;
+  // }
+  // cout << "--------" << endl;
+  for(int i=0; i<H; i++){
+    for(int j=0; j<W; j++){
+      cout << connect[i*W+j] << "," ;
+    }
+    cout << endl;
+  }
+
 
   free(graph);
   return 0;
