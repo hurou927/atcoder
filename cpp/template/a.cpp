@@ -30,28 +30,23 @@
 typedef long long ll;
 
 template <typename T>
-T inputValue()
-{
+T inputValue(){
   T a;
   std::cin >> a;
   // scanf("%llu", &a);
   return a;
 }
 
-void inputArray(int *p, int a)
-{
-  rep(i, a)
-  {
+void inputArray(int *p, int a){
+  rep(i, a){
     std::cin >> p[i];
     // scanf("%d",p+i);
   }
 }
 
 template <typename T>
-void inputVector(std::vector<T> *p, int a)
-{
-  rep(i, a)
-  {
+void inputVector(std::vector<T> *p, int a){
+  rep(i, a){
     T input;
     std::cin >> input;
     // scanf("%llu", &input);
@@ -60,22 +55,17 @@ void inputVector(std::vector<T> *p, int a)
 }
 
 template <typename T>
-void output(T a, int precision)
-{
-  if (precision > 0)
-  {
+void output(T a, int precision){
+  if (precision > 0){
     std::cout << std::setprecision(precision) << a << "\n";
-  }
-  else
-  {
+  }else{
     std::cout << a << "\n";
   }
 }
 
 void print() { std::cout << std::endl; }
 template <class Head, class... Tail>
-void print(Head &&head, Tail &&... tail)
-{
+void print(Head &&head, Tail &&... tail){
   std::cout << head << ",";
   print(std::forward<Tail>(tail)...);
 }
