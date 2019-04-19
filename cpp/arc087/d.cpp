@@ -1,6 +1,4 @@
-// https://atcoder.jp/contests/abc118/tasks/abc118_c
-
-// http://ctylim.hatenablog.com/entry/2015/08/30/191553
+// https://atcoder.jp/contests/abc082/tasks/arc087_b
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -127,33 +125,69 @@ int main(int argc, char **argv)
     }
   }
 
-
-  int dp[8001][8001]; // dp[m][i] : 
-
-  int xsize = X.size();
-  FOR(i,0,xsize){
-    dp[i][0] = 0;
+  // もし，最初がTなら
+  if(s[0] == 'F' && X.size()>0){
+    x = x - X[0];
+    X.erase(X.begin());
   }
-  FOR(m,0,x){
-    dp[0][m] = x==X[0];
+
+  sum = 0;
+  FOR(i, 0, X.size()){
+    sum += X[i];
+    X[i] = X[i] * 2;
+  }
+  x = x + sum;
+
+  sum = 0;
+  FOR(i, 0, Y.size()){
+    sum += Y[i];
+    Y[i] = Y[i] * 2;
+  }
+  y = y + sum;
+
+
+
+  vector<vector<char>> dp( max(X.size(),Y.size()) , vector<char>(max(x+1,y+1), 0));
+
+  print("X,Y = ",x,y);
+  print("DP:",x+1,"X",X.size(),"=================");
+
+  if(X.size()==0) {
+    if(x == 0) {
+      cout << "Yes" << endl;
+    }else{
+      cout << "NO" << endl;
+    }
+    return 0;
+  }
+
+
+  FOR(i,0,X.size()){
+    dp[i][0] = 0==x;
+  }
+  FOR(m,1,x+1){
+    dp[0][m] = m==X[0];
   }
 
   FOR(i,1,X.size()){
-    FOR(m,1,Y.size()){
+    FOR(m,1,x+1){
       dp[i][m] = (dp[i-1][m] == 1) || ( m>=X[i] && dp[i-1][m-X[i]]==1 );
     }
   }
 
-
-  // FOR(i,0,8000){
-  //   FOR(j,0,8000){
-  //     dp[i][j] = 0;
-  //   }
-  // }
-
-  
+  FOR(i,0,X.size()){
+    FOR(m,0,x+1){
+      printf("%d,",dp[i][m]);
+    }
+    cout << endl;
+  }
 
 
+  if(dp[X.size()-1][x] == 1) {
+    cout << "Yes" << endl;
+  }else{
+    cout << "NO" << endl;
+  }
 
   return 0;
 }
