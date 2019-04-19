@@ -8,7 +8,8 @@
 #include <numeric>
 #include <functional>
 #include <cmath>
-#include <queue>
+// #include <queue>
+#include <ext/pb_ds/priority_queue.hpp>
 #include <stack>
 #include <cstdlib>
 #include <cstdio>
@@ -78,12 +79,39 @@ struct Edge{
   int64_t from;
   int64_t to;
   int64_t w;
+  int64_t next;
 };
 
 struct DNode {
   int64_t cost;
   int64_t prev;
 };
+
+
+
+struct Graph {
+  int64_t *heads;
+  Edge *edges;
+  int64_t index;
+  Graph(int64_t nodeCount, int64_t edgeCount) {
+    index = 0;
+    heads = new int64_t [nodeCount];
+    for(int64_t i=0;i<nodeCount;i++){
+      heads[i] = -1;
+    }
+    edges = new Edge [edgeCount];
+  }
+  void add(Edge edge){
+    edge.next = heads[edge.from];
+    heads[edge.from] = index;
+    edges[index++] = edge;
+  }
+  ~Graph(){
+    delete heads;
+    delete edges;
+  }
+};
+
 
 const int64_t INF = INT64_MAX;
 std::vector<DNode> dijkstra(std::vector<std::vector<Edge>> &adj, const int64_t nodeCount, int64_t start)
@@ -116,7 +144,7 @@ std::vector<DNode> dijkstra(std::vector<std::vector<Edge>> &adj, const int64_t n
       int64_t nNode = (*i).to;
       int64_t cost_F2N = (*i).w;
       int64_t cost_S2N = dinfo[nNode].cost;
-
+      // print(nNode, cost_F2N, cost_S2F);
       if(cost_S2F + cost_F2N < cost_S2N){
         dinfo[nNode].cost = cost_S2F + cost_F2N;
         q.push(P(dinfo[nNode].cost, nNode));
@@ -133,6 +161,59 @@ std::vector<DNode> dijkstra(std::vector<std::vector<Edge>> &adj, const int64_t n
   return dinfo;
 }
 
+// const int64_t INF = INT64_MAX;
+std::vector<DNode> dijkstra(Graph &adj, const int64_t nodeCount, int64_t start)
+{
+  typedef std::pair<int64_t, int64_t> P; // first: weight, second: node_index
+
+  std::vector<DNode> dinfo(nodeCount, DNode{INF, -1});
+  std::priority_queue<P, vector<P>, greater<P>> q;
+
+  dinfo[start] = DNode{0, -1};
+  q.push(P(0, start));
+
+  while (q.size() != 0)
+  {
+
+    P n = q.top();
+    q.pop();
+    int64_t fCost = n.first;
+    int64_t fNode = n.second;
+
+    if (dinfo[fNode].cost < fCost)
+    {
+      continue;
+    }
+    //     cost_S2F     cost_F2N
+    // [S] --....-->[F]---------|
+    //  |----....--------[N]<---|
+    //      cost_S2N
+
+    int64_t cost_S2F = dinfo[fNode].cost;
+    int64_t index = adj.heads[fNode];
+    while(index != -1)
+    {
+      Edge e = adj.edges[index];
+      int64_t nNode = e.to;
+      int64_t cost_F2N = e.w;
+      int64_t cost_S2N = dinfo[nNode].cost;
+      // print("*", index, nNode, cost_F2N, cost_S2F);
+      if (cost_S2F + cost_F2N < cost_S2N)
+      {
+        dinfo[nNode].cost = cost_S2F + cost_F2N;
+        q.push(P(dinfo[nNode].cost, nNode));
+        dinfo[nNode].prev = fNode;
+      }
+      index = e.next;
+    }
+  }
+
+  // EACH(i, dinfo){
+  //   print(">", (*i).cost, (*i).prev);
+  // }
+
+  return dinfo;
+}
 
 std::vector<DNode> spfa(std::vector<std::vector<Edge>> &adj, const int64_t nodeCount, int64_t start)
 {
@@ -197,23 +278,41 @@ int main(int argc, char **argv)
   vector<int64_t> u(M), v(M), a(M), b(M);
 
   FOR(i,0,M){
-    cin >>  u[i] >> v[i] >> a[i] >> b[i];
+    // cin >>  u[i] >> v[i] >> a[i] >> b[i];
+    scanf("%lld", &u[i]);
+    scanf("%lld", &v[i]);
+    scanf("%lld", &a[i]);
+    scanf("%lld", &b[i]);
     u[i]--; v[i]--;
     // print(u[i], v[i], a[i], b[i]);
   }
 
-  vector<vector<Edge>> graphYen(N);
-  vector<vector<Edge>> graphDoll(N);
+  ////289ms
+  // vector<vector<Edge>> graphYen(N);
+  // vector<vector<Edge>> graphDoll(N);
 
+  // FOR(i, 0, M)
+  // {
+  //   graphYen[u[i]].push_back(Edge{u[i], v[i], a[i]});
+  //   graphYen[v[i]].push_back(Edge{v[i], u[i], a[i]});
+  //   graphDoll[u[i]].push_back(Edge{u[i], v[i], b[i]});
+  //   graphDoll[v[i]].push_back(Edge{v[i], u[i], b[i]});
+  // }
+  // vector<DNode> &&fromStart = dijkstra(graphYen, N, s);
+  // vector<DNode> &&fromEnd = dijkstra(graphDoll, N, t);
+
+  ////150ms
+  Graph gy(N, M<<1);
+  Graph gd(N, M<<1);
   FOR(i,0,M){
-    graphYen[u[i]].push_back(Edge{u[i], v[i], a[i]});
-    graphYen[v[i]].push_back(Edge{v[i], u[i], a[i]});
-    graphDoll[u[i]].push_back(Edge{u[i], v[i], b[i]});
-    graphDoll[v[i]].push_back(Edge{v[i], u[i], b[i]});
+    gy.add(Edge{u[i], v[i], a[i], -1});
+    gy.add(Edge{v[i], u[i], a[i], -1});
+    gd.add(Edge{u[i], v[i], b[i], -1});
+    gd.add(Edge{v[i], u[i], b[i], -1});
   }
-  vector<DNode> &&fromStart = spfa(graphYen, N, s);
-  vector<DNode> &&fromEnd = spfa(graphDoll, N, t);
-  // print(fromStart.size());
+  vector<DNode> &&fromStart = dijkstra(gy, N, s);
+  vector<DNode> &&fromEnd = dijkstra(gd, N, t);
+
 
   typedef std::pair<int64_t, int64_t> P;
   vector<P> costs(N);
@@ -221,16 +320,10 @@ int main(int argc, char **argv)
     costs[i] = P(W - (fromStart[i].cost+fromEnd[i].cost), i);
   }
 
+
+
+
   sort(costs.begin(), costs.end(), greater<P>());
-
-
-  // FOR(i,0,N){
-    // print(costs[i].second, costs[i].first);
-    // print(i, ">",fromStart[i].cost,"|", fromEnd[i].cost,fromStart[i].cost+fromEnd[i].cost);
-    // print(fromStart[i].cost+fromEnd[i].cost);
-    // print(W-(fromStart[i].cost+fromEnd[i].cost));
-  // }
-
   int64_t k = 0;
   FOR(i,0,N){
     while(i>costs[k].second){

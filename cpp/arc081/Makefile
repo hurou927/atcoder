@@ -1,5 +1,4 @@
-# CXX=g++
-CXX=g++-8
+CXX=g++
 CXXFLAGS=-O2 -g -W -std=c++11
 CXXLIBS=
 CXXSRC=$(wildcard *.cpp)
@@ -30,9 +29,3 @@ testd:
 	./d < case/d1.txt
 	./d < case/d2.txt
 	./d < case/d3.txt
-
-
-teste:
-	./e < case/e1.txt
-	./e < case/e2.txt
-	./e < case/e3.txt

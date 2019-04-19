@@ -1,4 +1,5 @@
-CXX=g++
+# CXX=g++
+CXX=g++-8
 CXXFLAGS=-O2 -g -W -std=c++17
 CXXLIBS=
 CXXSRC=$(wildcard *.cpp)
