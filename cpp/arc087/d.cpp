@@ -146,20 +146,11 @@ int main(int argc, char **argv)
   y = y + sum;
 
 
-
-  vector<vector<char>> dp( max(X.size(),Y.size()) , vector<char>(max(x+1,y+1), 0));
+  int h = max(X.size(),Y.size());
+  vector<vector<char>> dp( max(h,1) , vector<char>(max(x+1,y+1), 0));
 
   print("X,Y = ",x,y);
   print("DP:",x+1,"X",X.size(),"=================");
-
-  if(X.size()==0) {
-    if(x == 0) {
-      cout << "Yes" << endl;
-    }else{
-      cout << "NO" << endl;
-    }
-    return 0;
-  }
 
 
   FOR(i,0,X.size()){
@@ -182,8 +173,13 @@ int main(int argc, char **argv)
     cout << endl;
   }
 
-
-  if(dp[X.size()-1][x] == 1) {
+  if(X.size() == 0) {
+    if(x == 0) {
+      cout << "Yes" << endl;
+    }else{
+      cout << "NO" << endl;
+    }
+  }else if(dp[X.size()-1][x] == 1) {
     cout << "Yes" << endl;
   }else{
     cout << "NO" << endl;
