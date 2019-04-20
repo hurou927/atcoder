@@ -71,6 +71,56 @@ void print(Head &&head, Tail &&... tail){
 using namespace std;
 
 
+template<typename T>
+bool subset(vector<T> nums, T k){
+  int64_t N = nums.size();
+  if (k<0){
+    ERROR("parameter error");
+    return false;
+  }
+  if (k==0) {
+    return true;
+  }
+  if (N==0) {
+    return false;
+  }
+
+  vector<vector<char>> dp(N, vector<char>(k+1, 0));
+
+  //init
+  for(int64_t m=0;m<=k;m++){
+    dp[0][m] = (m==nums[0]);
+  }
+  for(int64_t i=1;i<N;i++){
+    dp[i][0] = 1;
+  }
+
+  for (int64_t i = 1; i < N; i++){
+    T num = nums[i];
+    for (int64_t m = 1; m <= k; m++){
+      dp[i][m] = (dp[i - 1][m] == 1) || (m >= num && dp[i - 1][m - num] == 1);
+    }
+    if(dp[i][k] == 1) {
+      return true;
+    }
+  }
+  
+  // print("=====",N,'x',k+1);
+  // cout << "==================" <<endl;
+  // for (int64_t i = 0; i < N; i++){
+  //   printf("[%3lld:%4lld] ", i,nums[i]);
+  //   for (int64_t m = 0; m <= k; m++){
+  //     printf("%d,",dp[i][m]);
+  //   }
+  //   cout << endl;
+  // }
+  // cout << "==================" << endl;
+
+  return dp[N-1][k] == 1;
+}
+
+
+
 int main(int argc, char **argv)
 {
   char c = 0;
@@ -82,7 +132,7 @@ int main(int argc, char **argv)
   }
   int64_t x, y;
   scanf("%lld%lld",&x, &y);
-
+  // print(x,y);
 
   vector<int64_t> X;
   X.reserve(len);
@@ -103,10 +153,10 @@ int main(int argc, char **argv)
       if(sum!=0){
         if(state=='x'){
           X.push_back(sum);
-          print('x', sum);
+          // print('x', sum);
         }else{
           Y.push_back(sum);
-          print('y', sum);
+          // print('y', sum);
         }
       }
       state = (state=='x') ? 'y' : 'x';
@@ -118,10 +168,10 @@ int main(int argc, char **argv)
   if(sum!=0){
     if(state=='x'){
       X.push_back(sum);
-      print('x', sum);
+      // print('x', sum);
     }else{
       Y.push_back(sum);
-      print('y', sum);
+      // print('y', sum);
     }
   }
 
@@ -130,60 +180,39 @@ int main(int argc, char **argv)
     x = x - X[0];
     X.erase(X.begin());
   }
-
+  // print("X,Y",x,y);
   sum = 0;
   FOR(i, 0, X.size()){
     sum += X[i];
     X[i] = X[i] * 2;
   }
   x = x + sum;
-
+  // print("sum of x_0-x_i",sum);
   sum = 0;
   FOR(i, 0, Y.size()){
     sum += Y[i];
     Y[i] = Y[i] * 2;
   }
   y = y + sum;
+  // print("sum of y_0-y_i", sum);
 
-
-  int h = max(X.size(),Y.size());
-  vector<vector<char>> dp( max(h,1) , vector<char>(max(x+1,y+1), 0));
-
-  print("X,Y = ",x,y);
-  print("DP:",x+1,"X",X.size(),"=================");
-
-
-  FOR(i,0,X.size()){
-    dp[i][0] = 0==x;
-  }
-  FOR(m,1,x+1){
-    dp[0][m] = m==X[0];
-  }
-
-  FOR(i,1,X.size()){
-    FOR(m,1,x+1){
-      dp[i][m] = (dp[i-1][m] == 1) || ( m>=X[i] && dp[i-1][m-X[i]]==1 );
-    }
-  }
-
-  FOR(i,0,X.size()){
-    FOR(m,0,x+1){
-      printf("%d,",dp[i][m]);
-    }
-    cout << endl;
-  }
-
-  if(X.size() == 0) {
-    if(x == 0) {
-      cout << "Yes" << endl;
-    }else{
-      cout << "NO" << endl;
-    }
-  }else if(dp[X.size()-1][x] == 1) {
-    cout << "Yes" << endl;
+  // print(">>>>>>>>>>(Nx,Ix,Ny,Iy)", X.size(),x,Y.size(),y);
+  bool flag = true;
+  if (X.size()==0){
+    flag = flag && (x == 0);
   }else{
-    cout << "NO" << endl;
+    flag = flag && subset(X, x);
+  }
+  if (Y.size()==0){
+    flag = flag && (y == 0);
+  }else{
+    flag = flag && subset(Y, y);
   }
 
+
+  cout << (flag ? "Yes" : "No") << endl;
   return 0;
+
 }
+
+//1_40だけ通らない
