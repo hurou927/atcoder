@@ -30,30 +30,6 @@
 typedef long long ll;
 
 
-int64_t inputValue(){
-  int64_t a;
-  scanf("%llu", &a);
-  return a;
-}
-
-
-void inputVector(std::vector<int64_t> &p, int64_t a){
-  rep(i, a){
-    int64_t input;
-    scanf("%llu", &input);
-    p.push_back(input);
-  }
-}
-
-template <typename T>
-void output(T a, int precision){
-  if (precision > 0){
-    std::cout << std::setprecision(precision) << a << "\n";
-  }else{
-    std::cout << a << "\n";
-  }
-}
-
 void print() { std::cout << std::endl; }
 template <class Head, class... Tail>
 void print(Head &&head, Tail &&... tail){
@@ -63,16 +39,55 @@ void print(Head &&head, Tail &&... tail){
 
 using namespace std;
 
+void solve0(){
+  int64_t N, Q;
+  scanf("%lld%lld", &N, &Q);
+  vector<char> s(N);
+  vector<pair<char, char>> td(Q);
+  getc(stdin);
+  for (int i = 0; i < N; i++)
+  {
+    s[i] = getc(stdin);
+  }
+  getc(stdin);
+  for (int i = 0; i < Q; i++)
+  {
+    char t, d;
+    scanf("%c %c\n", &t, &d);
+    td[i] = make_pair(t, d);
+    // print(t,d);
+  }
+
+  int L = 0;
+  int R = N - 1;
+  for (int i = Q - 1; i >= 0; i--)
+  {
+    char t = td[i].first;
+    char d = td[i].second;
+    if (L<N && d == 'L') L = L + (t == s[L]);
+    else if (L<N && L > 0) L = L - (t == s[L - 1]);
+
+    if (R>=0 && d == 'R') R = R - (t == s[R]);
+    else if (R>=0 && R < N - 1) R = R + (t == s[R + 1]);
+  }
+  
+
+  
+  // for (int i = Q - 1; i >= 0; i--)
+  // {
+  //   char t = td[i].first;
+  //   char d = td[i].second;
+
+  //   if (d == 'R') R = R - (t == s[R]);
+  //   else if (R < N - 1) R = R + (t == s[R + 1]);
+  //   if (R < 0) break;
+  // }
+  // print(L, R);
+  cout << (L <= R ? R - L + 1 : 0) << endl;
+}
 
 int main(int argc, char **argv)
 {
-  int64_t N = inputValue();
-  vector<int64_t> A;
-  A.reserve(N);
-  inputVector(A, N);
-  
-
-  print('c', 1, 2.01, 3);
-
+  solve0(); //wrong answer
   return 0;
 }
