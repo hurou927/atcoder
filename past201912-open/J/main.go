@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
 )
 
@@ -11,13 +10,13 @@ const Inf int = math.MaxInt32
 
 func dln(v ...interface{}) {
 	if debug {
-		log.Println(v...)
+		fmt.Println(v...)
 	}
 }
 
 func df(s string, v ...interface{}) {
 	if debug {
-		log.Printf(s, v...)
+		fmt.Printf(s, v...)
 	}
 }
 
@@ -176,12 +175,21 @@ func main() {
 	}
 
 	addEdges(&g, t)
-	// g.print()
 
-	var start, end int = H*W - W, H*W - 1
-	fmt.Println(start, end)
-	dist := g.dijkstra_bf(start, end)
-	for i, v := range dist {
-		fmt.Println(i, v)
+	var start, mid, end int = H*W - W, H*W - 1, W - 1
+	start2all := g.dijkstra_bf(start, -1)
+	mid2all := g.dijkstra_bf(mid, -1)
+	end2all := g.dijkstra_bf(end, -1)
+
+	var minDist int = Inf
+	for i := 0; i < H*W; i++ {
+		h := i / W
+		w := i % W
+		d := start2all[i].v + mid2all[i].v + end2all[i].v - 2*t[h][w]
+		if minDist > d {
+			minDist = d
+		}
 	}
+
+	fmt.Println(minDist)
 }
